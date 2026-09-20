@@ -15,7 +15,6 @@ public class CategoriesController : ControllerBase
         _categoryService = categoryService;
     }
 
-
     [HttpGet]
     public async Task<IActionResult> GetAllCategories()
     {
@@ -28,22 +27,15 @@ public class CategoriesController : ControllerBase
             Description = c.Description,
             IconUrl = c.IconUrl,
             VideoCount = c.Videos.Count
-
-
         }).ToList();
-        return Ok(result);
 
+        return Ok(result);
     }
 
     [HttpGet("{categoryId}")]
     public async Task<IActionResult> GetCategoryById(long categoryId)
     {
-    
         var category = await _categoryService.GetByIdAsync(categoryId);
-        if (category is null)
-        {
-            return NotFound();
-        }
 
         var result = new CategoryDto
         {
@@ -54,8 +46,8 @@ public class CategoriesController : ControllerBase
             VideoCount = category.Videos.Count
         };
         return Ok(result);
-
     }
+
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateCategoryDto dto)
     {
@@ -76,21 +68,14 @@ public class CategoriesController : ControllerBase
     [HttpPut("{categoryId}")]
     public async Task<IActionResult> Update(long categoryId, [FromBody] UpdateCategoryDto dto)
     {
-        var success = await _categoryService.UpdateAsync(categoryId, dto.Name, dto.Description, dto.IconUrl);
-        if (!success)
-            return NotFound();
-
+        await _categoryService.UpdateAsync(categoryId, dto.Name, dto.Description, dto.IconUrl);
         return NoContent();
     }
 
     [HttpDelete("{categoryId}")]
     public async Task<IActionResult> Delete(long categoryId)
     {
-         var success = await _categoryService.DeleteAsync(categoryId);
-         if (!success)
-             return NotFound();
- 
-         return NoContent();
+        await _categoryService.DeleteAsync(categoryId);
+        return NoContent();
     }
-
 }

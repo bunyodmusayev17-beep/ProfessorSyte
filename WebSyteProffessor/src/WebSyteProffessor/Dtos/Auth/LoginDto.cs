@@ -1,6 +1,7 @@
-﻿namespace WebSyteProffessor.Dtos.Auth
+﻿namespace WebSyteProffessor.Dtos.Auth;
+
+public class LoginDto
 {
-    public class LoginDto
-    {
-    }
+    public string Email { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
 }

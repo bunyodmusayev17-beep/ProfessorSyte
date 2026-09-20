@@ -26,6 +26,10 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<ProductReview> ProductReviews { get; set; }
     public DbSet<SiteSettings> SiteSettings { get; set; }
 
+
+
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

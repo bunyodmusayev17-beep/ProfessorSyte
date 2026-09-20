@@ -1,4 +1,5 @@
 ﻿using WebSyteProffessor.Entities;
+using WebSyteProffessor.Exceptions;
 using WebSyteProffessor.Repositories;
 
 namespace WebSyteProffessor.Services;
@@ -17,9 +18,13 @@ public class CategoryService : ICategoryService
         return await _repository.GetAllAsync(c => c.Videos);
     }
 
-    public async Task<Category?> GetByIdAsync(long categoryId)
+    public async Task<Category> GetByIdAsync(long categoryId)
     {
-        return await _repository.GetByIdAsync(categoryId, c => c.Videos);
+        var category = await _repository.GetByIdAsync(categoryId, c => c.Videos);
+        if (category is null)
+            throw new NotFoundException($"Category not found (categoryId: {categoryId})");
+
+        return category;
     }
 
     public async Task<Category> CreateAsync(string name, string? description, string? iconUrl)
@@ -28,25 +33,20 @@ public class CategoryService : ICategoryService
         return await _repository.AddAsync(category);
     }
 
-    public async Task<bool> UpdateAsync(long categoryId, string name, string? description, string? iconUrl)
+    public async Task UpdateAsync(long categoryId, string name, string? description, string? iconUrl)
     {
-        var category = await _repository.GetByIdAsync(categoryId);
-        if (category is null) return false;
+        var category = await GetByIdAsync(categoryId);
 
         category.Name = name;
         category.Description = description;
         category.IconUrl = iconUrl;
 
         await _repository.UpdateAsync(category);
-        return true;
     }
 
-    public async Task<bool> DeleteAsync(long categoryId)
+    public async Task DeleteAsync(long categoryId)
     {
-        var category = await _repository.GetByIdAsync(categoryId);
-        if (category is null) return false;
-
+        var category = await GetByIdAsync(categoryId);
         await _repository.DeleteAsync(category);
-        return true;
     }
 }

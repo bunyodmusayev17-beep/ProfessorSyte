@@ -1,0 +1,122 @@
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using WebSyteProffessor.Dtos.Auth;
+using WebSyteProffessor.Entities;
+using WebSyteProffessor.Exceptions;
+using WebSyteProffessor.Services;
+
+namespace WebSyteProffessor.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class AuthController : ControllerBase
+{
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly ITokenService _tokenService;
+
+    public AuthController(UserManager<ApplicationUser> userManager, ITokenService tokenService)
+    {
+        _userManager = userManager;
+        _tokenService = tokenService;
+    }
+
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] RegisterDto dto)
+    {
+        var errors = new Dictionary<string, string>();
+
+        var existingEmail = await _userManager.FindByEmailAsync(dto.Email);
+        if (existingEmail is not null)
+            errors["email"] = "This email is already used";
+
+        var existingUserName = await _userManager.FindByNameAsync(dto.UserName);
+        if (existingUserName is not null)
+            errors["userName"] = "This username is already used";
+
+        if (errors.Count > 0)
+            throw new ConflictException(errors);
+
+        var user = new ApplicationUser
+        {
+            Email = dto.Email,
+            UserName = dto.UserName
+        };
+
+        var result = await _userManager.CreateAsync(user, dto.Password);
+        if (!result.Succeeded)
+        {
+            var identityErrors = string.Join("; ", result.Errors.Select(e => e.Description));
+            throw new BadRequestException(identityErrors);
+        }
+
+        await _userManager.AddToRoleAsync(user, "User");
+
+        var response = await BuildAuthResponseAsync(user);
+        return Ok(response);
+    }
+
+
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginDto dto)
+    {
+        var user = await _userManager.FindByEmailAsync(dto.Email);
+        if (user is null)
+            throw new UnauthorizedException("Invalid email or password");
+
+        var passwordValid = await _userManager.CheckPasswordAsync(user, dto.Password);
+        if (!passwordValid)
+            throw new UnauthorizedException("Invalid email or password");
+
+        var response = await BuildAuthResponseAsync(user);
+        return Ok(response);
+    }
+
+    [HttpPost("refresh")]
+    public async Task<IActionResult> Refresh([FromBody] RefreshTokenDto dto)
+    {
+        var storedToken = await _tokenService.GetValidRefreshTokenAsync(dto.RefreshToken);
+        if (storedToken is null)
+            throw new UnauthorizedException("Invalid or expired refresh token");
+
+        var user = await _userManager.FindByIdAsync(storedToken.UserId);
+        if (user is null)
+            throw new UnauthorizedException("Invalid or expired refresh token");
+
+        // Rotation: eski refresh token bekor qilinadi, yangisi beriladi
+        await _tokenService.RevokeRefreshTokenAsync(storedToken);
+
+        var response = await BuildAuthResponseAsync(user);
+        return Ok(response);
+    }
+
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout([FromBody] RefreshTokenDto dto)
+    {
+        var storedToken = await _tokenService.GetValidRefreshTokenAsync(dto.RefreshToken);
+        if (storedToken is not null)
+        {
+            await _tokenService.RevokeRefreshTokenAsync(storedToken);
+        }
+
+        return NoContent();
+    }
+
+    private async Task<AuthResponseDto> BuildAuthResponseAsync(ApplicationUser user)
+    {
+        var roles = await _userManager.GetRolesAsync(user);
+
+        var accessToken = _tokenService.GenerateAccessToken(user, roles);
+        var refreshToken = _tokenService.GenerateRefreshToken();
+
+        await _tokenService.SaveRefreshTokenAsync(user.Id, refreshToken);
+
+        return new AuthResponseDto
+        {
+            AccessToken = accessToken,
+            RefreshToken = refreshToken,
+            Email = user.Email ?? string.Empty,
+            Roles = roles.ToList()
+        };
+    }
+}
