@@ -1,1 +1,5 @@
-<Solution />
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/WebSyteProffessor/WebSyteProffessor.csproj" />
+  </Folder>
+</Solution>
