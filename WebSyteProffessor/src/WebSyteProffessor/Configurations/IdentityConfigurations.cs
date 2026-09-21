@@ -14,6 +14,7 @@ public static class IdentityConfigurations
             options.Password.RequiredLength = 6;
             options.Password.RequireNonAlphanumeric = false;
             options.Password.RequireUppercase = false;
+            options.User.RequireUniqueEmail = true;
         })
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();

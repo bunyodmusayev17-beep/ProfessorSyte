@@ -39,7 +39,8 @@ public class AuthController : ControllerBase
         var user = new ApplicationUser
         {
             Email = dto.Email,
-            UserName = dto.UserName
+            UserName = dto.UserName,
+            Role = UserRole.User
         };
 
         var result = await _userManager.CreateAsync(user, dto.Password);
@@ -49,28 +50,30 @@ public class AuthController : ControllerBase
             throw new BadRequestException(identityErrors);
         }
 
-        await _userManager.AddToRoleAsync(user, "User");
-
-        var response = await BuildAuthResponseAsync(user);
+        var response = BuildAuthResponse(user);
+        await SaveRefreshTokenForUserAsync(user, response);
         return Ok(response);
     }
-
-
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto dto)
     {
-        var user = await _userManager.FindByEmailAsync(dto.Email);
+        var user = await _userManager.FindByEmailAsync(dto.EmailOrUserName)
+                   ?? await _userManager.FindByNameAsync(dto.EmailOrUserName);
+
         if (user is null)
-            throw new UnauthorizedException("Invalid email or password");
+            throw new UnauthorizedException("Invalid email/username or password");
 
         var passwordValid = await _userManager.CheckPasswordAsync(user, dto.Password);
         if (!passwordValid)
-            throw new UnauthorizedException("Invalid email or password");
+            throw new UnauthorizedException("Invalid email/username or password");
 
-        var response = await BuildAuthResponseAsync(user);
+        var response = BuildAuthResponse(user);
+        await SaveRefreshTokenForUserAsync(user, response);
         return Ok(response);
     }
+
+
 
     [HttpPost("refresh")]
     public async Task<IActionResult> Refresh([FromBody] RefreshTokenDto dto)
@@ -83,10 +86,10 @@ public class AuthController : ControllerBase
         if (user is null)
             throw new UnauthorizedException("Invalid or expired refresh token");
 
-        // Rotation: eski refresh token bekor qilinadi, yangisi beriladi
         await _tokenService.RevokeRefreshTokenAsync(storedToken);
 
-        var response = await BuildAuthResponseAsync(user);
+        var response = BuildAuthResponse(user);
+        await SaveRefreshTokenForUserAsync(user, response);
         return Ok(response);
     }
 
@@ -102,21 +105,22 @@ public class AuthController : ControllerBase
         return NoContent();
     }
 
-    private async Task<AuthResponseDto> BuildAuthResponseAsync(ApplicationUser user)
+    private AuthResponseDto BuildAuthResponse(ApplicationUser user)
     {
-        var roles = await _userManager.GetRolesAsync(user);
-
-        var accessToken = _tokenService.GenerateAccessToken(user, roles);
+        var accessToken = _tokenService.GenerateAccessToken(user);
         var refreshToken = _tokenService.GenerateRefreshToken();
-
-        await _tokenService.SaveRefreshTokenAsync(user.Id, refreshToken);
 
         return new AuthResponseDto
         {
             AccessToken = accessToken,
             RefreshToken = refreshToken,
             Email = user.Email ?? string.Empty,
-            Roles = roles.ToList()
+            Role = user.Role.ToString()
         };
+    }
+
+    private async Task SaveRefreshTokenForUserAsync(ApplicationUser user, AuthResponseDto response)
+    {
+        await _tokenService.SaveRefreshTokenAsync(user.Id, response.RefreshToken);
     }
 }

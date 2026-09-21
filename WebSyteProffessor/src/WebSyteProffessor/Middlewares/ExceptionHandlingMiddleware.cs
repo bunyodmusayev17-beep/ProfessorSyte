@@ -25,7 +25,7 @@ namespace WebSyteProffessor.Middlewares
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Kutilmagan xatolik yuz berdi");
+                _logger.LogError(ex, "An unhandled exception occurred");
                 await HandleExceptionAsync(context, ex);
             }
         }

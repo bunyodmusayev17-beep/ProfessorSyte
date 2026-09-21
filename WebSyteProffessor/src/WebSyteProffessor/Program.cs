@@ -15,18 +15,12 @@ builder.AddJwtConfigurations();
 
 var app = builder.Build();
 
-await app.SeedRolesAsync();
+
 
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 
-
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
 if (app.Environment.IsDevelopment())
 {

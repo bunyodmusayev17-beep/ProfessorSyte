@@ -19,7 +19,7 @@ public class TokenService : ITokenService
         _refreshTokenRepository = refreshTokenRepository;
     }
 
-    public string GenerateAccessToken(ApplicationUser user, IList<string> roles)
+    public string GenerateAccessToken(ApplicationUser user)
     {
         var jwtKey = _configuration["Jwt:Key"]!;
         var jwtIssuer = _configuration["Jwt:Issuer"]!;
@@ -27,16 +27,12 @@ public class TokenService : ITokenService
         var expirationMinutes = int.Parse(_configuration["Jwt:AccessTokenExpirationMinutes"]!);
 
         var claims = new List<Claim>
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
-
-        foreach (var role in roles)
-        {
-            claims.Add(new Claim(ClaimTypes.Role, role));
-        }
+    {
+        new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+        new Claim(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
+        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+        new Claim(ClaimTypes.Role, user.Role.ToString())
+    };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
