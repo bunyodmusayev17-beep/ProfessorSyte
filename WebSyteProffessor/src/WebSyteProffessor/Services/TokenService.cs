@@ -27,12 +27,13 @@ public class TokenService : ITokenService
         var expirationMinutes = int.Parse(_configuration["Jwt:AccessTokenExpirationMinutes"]!);
 
         var claims = new List<Claim>
-    {
-        new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-        new Claim(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
-        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-        new Claim(ClaimTypes.Role, user.Role.ToString())
-    };
+        {
+           new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+           new Claim(ClaimTypes.NameIdentifier, user.Id),
+           new Claim(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
+           new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+           new Claim(ClaimTypes.Role, user.Role.ToString())
+        };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -79,6 +80,14 @@ public class TokenService : ITokenService
 
         return token;
     }
+
+
+
+
+
+
+
+
 
     public async Task RevokeRefreshTokenAsync(RefreshToken refreshToken)
     {

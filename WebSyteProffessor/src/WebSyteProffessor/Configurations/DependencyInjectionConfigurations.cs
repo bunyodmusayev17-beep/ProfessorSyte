@@ -11,5 +11,6 @@ public static class DependencyInjectionConfigurations
         builder.Services.AddScoped<ICategoryService, CategoryService>();
         builder.Services.AddScoped<IVideoService, VideoService>();
         builder.Services.AddScoped<ITokenService, TokenService>();
+        builder.Services.AddScoped<ICommentService, CommentService>();
     }
 }
