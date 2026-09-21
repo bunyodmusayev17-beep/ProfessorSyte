@@ -12,6 +12,13 @@ public class VideoDto
     public long CategoryId { get; set; }
     public string CategoryName { get; set; } = string.Empty;
     public long? ProjectId { get; set; }
+
+
+    // Reaction count 
+    public int LikeCount { get; set; }
+    public int DislikeCount { get; set; }
+
+
     public List<ProductLinkDto> ProductLinks { get; set; } = new();
 }
 

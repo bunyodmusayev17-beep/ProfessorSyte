@@ -11,4 +11,7 @@ public interface IVideoService
     Task UpdateAsync(long videoId, string title, string description, string youtubeUrl, long categoryId, bool isExclusive, long? projectId, List<(string StoreName, string ProductName, string Url)> productLinks);
     Task DeleteAsync(long videoId);
     Task IncrementViewCountAsync(long videoId);
+
+    //Reaction related method
+    Task<(int LikeCount, int DislikeCount)> GetReactionCountsAsync(long videoId);
 }

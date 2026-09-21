@@ -113,4 +113,9 @@ public class VideoService : IVideoService
 
         throw new ArgumentException("Unrecognized YouTube URL format");
     }
+
+    public Task<(int LikeCount, int DislikeCount)> GetReactionCountsAsync(long videoId)
+    {
+        throw new NotImplementedException();
+    }
 }

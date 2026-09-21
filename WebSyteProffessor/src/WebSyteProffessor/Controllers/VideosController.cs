@@ -9,10 +9,12 @@ namespace WebSyteProffessor.Controllers;
 public class VideosController : ControllerBase
 {
     private readonly IVideoService _videoService;
+    private readonly IReactionService _reactionService;
 
-    public VideosController(IVideoService videoService)
+    public VideosController(IVideoService videoService, IReactionService reactionService)
     {
         _videoService = videoService;
+        _reactionService = reactionService;
     }
 
     [HttpGet]
@@ -27,7 +29,14 @@ public class VideosController : ControllerBase
     {
         var video = await _videoService.GetByIdAsync(videoId);
         await _videoService.IncrementViewCountAsync(videoId);
-        return Ok(MapToDto(video));
+
+        var (likeCount, dislikeCount) = await _reactionService.GetCountsAsync(videoId);
+
+        var dto = MapToDto(video);
+        dto.LikeCount = likeCount;
+        dto.DislikeCount = dislikeCount;
+
+        return Ok(dto);
     }
 
     [HttpGet("category/{categoryId}")]
