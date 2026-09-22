@@ -13,5 +13,9 @@ public static class DependencyInjectionConfigurations
         builder.Services.AddScoped<ITokenService, TokenService>();
         builder.Services.AddScoped<ICommentService, CommentService>();
         builder.Services.AddScoped<IReactionService, ReactionService>();
+        builder.Services.AddScoped<IFavoriteService, FavoriteService>();
+        builder.Services.AddScoped<IWatchProgressService, WatchProgressService>();
+        builder.Services.AddScoped<IFileUploadService, FileUploadService>();
+        builder.Services.AddScoped<IProjectService, ProjectService>();
     }
 }

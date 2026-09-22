@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WebSyteProffessor.Dtos.Category;
 using WebSyteProffessor.Services;
 
@@ -49,6 +50,7 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create([FromBody] CreateCategoryDto dto)
     {
         var category = await _categoryService.CreateAsync(dto.Name, dto.Description, dto.IconUrl);
@@ -66,6 +68,7 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpPut("{categoryId}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Update(long categoryId, [FromBody] UpdateCategoryDto dto)
     {
         await _categoryService.UpdateAsync(categoryId, dto.Name, dto.Description, dto.IconUrl);
@@ -73,6 +76,7 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpDelete("{categoryId}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(long categoryId)
     {
         await _categoryService.DeleteAsync(categoryId);

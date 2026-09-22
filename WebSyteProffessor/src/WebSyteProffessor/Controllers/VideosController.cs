@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WebSyteProffessor.Dtos.Video;
 using WebSyteProffessor.Services;
 
@@ -21,7 +22,18 @@ public class VideosController : ControllerBase
     public async Task<IActionResult> GetAllVideos()
     {
         var videos = await _videoService.GetAllAsync();
-        return Ok(videos.Select(MapToDto).ToList());
+        var dtos = new List<VideoDto>();
+
+        foreach (var video in videos)
+        {
+            var dto = MapToDto(video);
+            var (likeCount, dislikeCount) = await _reactionService.GetCountsAsync(video.VideoId);
+            dto.LikeCount = likeCount;
+            dto.DislikeCount = dislikeCount;
+            dtos.Add(dto);
+        }
+
+        return Ok(dtos);
     }
 
     [HttpGet("{videoId}")]
@@ -43,10 +55,22 @@ public class VideosController : ControllerBase
     public async Task<IActionResult> GetVideosByCategoryId(long categoryId)
     {
         var videos = await _videoService.GetByCategoryIdAsync(categoryId);
-        return Ok(videos.Select(MapToDto).ToList());
+        var dtos = new List<VideoDto>();
+
+        foreach (var video in videos)
+        {
+            var dto = MapToDto(video);
+            var (likeCount, dislikeCount) = await _reactionService.GetCountsAsync(video.VideoId);
+            dto.LikeCount = likeCount;
+            dto.DislikeCount = dislikeCount;
+            dtos.Add(dto);
+        }
+
+        return Ok(dtos);
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create([FromBody] CreateVideoDto dto)
     {
         var productLinks = dto.ProductLinks
@@ -60,6 +84,7 @@ public class VideosController : ControllerBase
     }
 
     [HttpPut("{videoId}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Update(long videoId, [FromBody] UpdateVideoDto dto)
     {
         var productLinks = dto.ProductLinks
@@ -73,6 +98,7 @@ public class VideosController : ControllerBase
     }
 
     [HttpDelete("{videoId}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteVideo(long videoId)
     {
         await _videoService.DeleteAsync(videoId);
