@@ -24,7 +24,7 @@ export default function Topbar() {
     <header className="sticky top-0 z-10 bg-white border-b border-border px-4 md:px-8 py-3 flex items-center justify-between gap-3">
       <div className="md:hidden flex items-center gap-1.5 shrink-0">
         <Cpu className="text-primary" size={20} />
-        <span className="font-semibold text-ink text-sm">RobotTexnika</span>
+        <span className="font-semibold text-ink text-sm">WebSyteProfessor</span>
       </div>
 
       <form onSubmit={handleSearch} className="flex-1 max-w-md relative min-w-0">

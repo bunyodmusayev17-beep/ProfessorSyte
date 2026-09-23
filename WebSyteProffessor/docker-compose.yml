@@ -1,0 +1,43 @@
+services:
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: professor-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ProfessorDb
+      POSTGRES_USER: professor
+      POSTGRES_PASSWORD: 1
+    volumes:
+      - professor-postgres-data:/var/lib/postgresql/data
+    networks:
+      - professor-network
+
+  backend:
+    image: professor-backend:latest
+    container_name: professor-backend
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=ProfessorDb;Username=professor;Password=1"
+    depends_on:
+      - postgres
+    networks:
+      - professor-network
+
+  frontend:
+    image: professor-frontend:latest
+    container_name: professor-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    networks:
+      - professor-network
+
+volumes:
+  professor-postgres-data:
+
+networks:
+  professor-network:
