@@ -15,6 +15,9 @@ services:
 
   backend:
     image: professor-backend:latest
+    build:
+      context: ./src/WebSyteProffessor
+      dockerfile: Dockerfile
     container_name: professor-backend
     restart: unless-stopped
     environment:
@@ -27,6 +30,9 @@ services:
 
   frontend:
     image: professor-frontend:latest
+    build:
+      context: ./src/frontendapp
+      dockerfile: Dockerfile
     container_name: professor-frontend
     restart: unless-stopped
     depends_on:
