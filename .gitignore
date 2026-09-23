@@ -64,3 +64,11 @@ ehthumbs.db
 .env.*
 secrets.json
 appsettings.*.local.json
+
+# Frontend (front/) — Node / Vite
+front/node_modules/
+front/dist/
+front/.env
+front/.env.local
+**/node_modules/
+**/dist/
