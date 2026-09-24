@@ -232,6 +232,9 @@ namespace WebSyteProffessor.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("CategoryId"));
 
+                    b.Property<string>("CoverImageUrl")
+                        .HasColumnType("text");
+
                     b.Property<string>("Description")
                         .HasColumnType("text");
 

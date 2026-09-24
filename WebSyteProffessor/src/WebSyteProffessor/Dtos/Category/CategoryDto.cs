@@ -1,4 +1,4 @@
-﻿namespace WebSyteProffessor.Dtos.Category
+namespace WebSyteProffessor.Dtos.Category
 {
     public class CategoryDto
     {
@@ -6,6 +6,7 @@
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
         public string? IconUrl { get; set; }
+        public string? CoverImageUrl { get; set; }
         public int VideoCount { get; set; }
     }
 }

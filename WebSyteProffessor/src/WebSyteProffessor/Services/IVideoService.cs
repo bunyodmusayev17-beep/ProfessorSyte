@@ -1,4 +1,5 @@
-﻿using WebSyteProffessor.Entities;
+using WebSyteProffessor.Dtos.Video;
+using WebSyteProffessor.Entities;
 
 namespace WebSyteProffessor.Services;
 
@@ -7,11 +8,8 @@ public interface IVideoService
     Task<List<Video>> GetAllAsync();
     Task<Video> GetByIdAsync(long videoId);
     Task<List<Video>> GetByCategoryIdAsync(long categoryId);
-    Task<Video> CreateAsync(string title, string description, string youtubeUrl, long categoryId, bool isExclusive, long? projectId, List<(string StoreName, string ProductName, string Url)> productLinks);
-    Task UpdateAsync(long videoId, string title, string description, string youtubeUrl, long categoryId, bool isExclusive, long? projectId, List<(string StoreName, string ProductName, string Url)> productLinks);
+    Task<Video> CreateAsync(CreateVideoDto dto);
+    Task UpdateAsync(long videoId, UpdateVideoDto dto);
     Task DeleteAsync(long videoId);
     Task IncrementViewCountAsync(long videoId);
-
-    //Reaction related method
-    Task<(int LikeCount, int DislikeCount)> GetReactionCountsAsync(long videoId);
 }
