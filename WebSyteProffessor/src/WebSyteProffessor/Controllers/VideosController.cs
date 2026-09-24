@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebSyteProffessor.Dtos.Video;
 using WebSyteProffessor.Services;
@@ -22,18 +22,7 @@ public class VideosController : ControllerBase
     public async Task<IActionResult> GetAllVideos()
     {
         var videos = await _videoService.GetAllAsync();
-        var dtos = new List<VideoDto>();
-
-        foreach (var video in videos)
-        {
-            var dto = MapToDto(video);
-            var (likeCount, dislikeCount) = await _reactionService.GetCountsAsync(video.VideoId);
-            dto.LikeCount = likeCount;
-            dto.DislikeCount = dislikeCount;
-            dtos.Add(dto);
-        }
-
-        return Ok(dtos);
+        return Ok(await MapWithReactionCountsAsync(videos));
     }
 
     [HttpGet("{videoId}")]
@@ -55,45 +44,22 @@ public class VideosController : ControllerBase
     public async Task<IActionResult> GetVideosByCategoryId(long categoryId)
     {
         var videos = await _videoService.GetByCategoryIdAsync(categoryId);
-        var dtos = new List<VideoDto>();
-
-        foreach (var video in videos)
-        {
-            var dto = MapToDto(video);
-            var (likeCount, dislikeCount) = await _reactionService.GetCountsAsync(video.VideoId);
-            dto.LikeCount = likeCount;
-            dto.DislikeCount = dislikeCount;
-            dtos.Add(dto);
-        }
-
-        return Ok(dtos);
+        return Ok(await MapWithReactionCountsAsync(videos));
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Create([FromBody] CreateVideoDto dto)
+    public async Task<IActionResult> Create([FromForm] CreateVideoDto dto)
     {
-        var productLinks = dto.ProductLinks
-            .Select(p => (p.StoreName, p.ProductName, p.Url))
-            .ToList();
-
-        var video = await _videoService.CreateAsync(
-            dto.Title, dto.Description, dto.YoutubeUrl, dto.CategoryId, dto.IsExclusive, dto.ProjectId, productLinks);
-
+        var video = await _videoService.CreateAsync(dto);
         return CreatedAtAction(nameof(GetVideoById), new { videoId = video.VideoId }, MapToDto(video));
     }
 
     [HttpPut("{videoId}")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Update(long videoId, [FromBody] UpdateVideoDto dto)
+    public async Task<IActionResult> Update(long videoId, [FromForm] UpdateVideoDto dto)
     {
-        var productLinks = dto.ProductLinks
-            .Select(p => (p.StoreName, p.ProductName, p.Url))
-            .ToList();
-
-        await _videoService.UpdateAsync(
-            videoId, dto.Title, dto.Description, dto.YoutubeUrl, dto.CategoryId, dto.IsExclusive, dto.ProjectId, productLinks);
-
+        await _videoService.UpdateAsync(videoId, dto);
         return NoContent();
     }
 
@@ -105,6 +71,22 @@ public class VideosController : ControllerBase
         return NoContent();
     }
 
+    private async Task<List<VideoDto>> MapWithReactionCountsAsync(List<Entities.Video> videos)
+    {
+        var dtos = new List<VideoDto>(videos.Count);
+
+        foreach (var video in videos)
+        {
+            var dto = MapToDto(video);
+            var (likeCount, dislikeCount) = await _reactionService.GetCountsAsync(video.VideoId);
+            dto.LikeCount = likeCount;
+            dto.DislikeCount = dislikeCount;
+            dtos.Add(dto);
+        }
+
+        return dtos;
+    }
+
     private static VideoDto MapToDto(Entities.Video video)
     {
         return new VideoDto
@@ -114,8 +96,10 @@ public class VideosController : ControllerBase
             Description = video.Description,
             YoutubeUrl = video.YoutubeUrl,
             ThumbnailUrl = video.ThumbnailUrl,
+            HasCustomThumbnail = VideoService.IsUploadedThumbnail(video.ThumbnailUrl),
             IsExclusive = video.IsExclusive,
             ViewCount = video.ViewCount,
+            CreatedAt = video.CreatedAt,
             CategoryId = video.CategoryId,
             CategoryName = video.Category?.Name ?? string.Empty,
             ProjectId = video.ProjectId,

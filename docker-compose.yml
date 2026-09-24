@@ -1,0 +1,59 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: technovolt-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ProfessorDb
+      POSTGRES_USER: professor
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-1}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U professor -d ProfessorDb']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - technovolt
+
+  backend:
+    image: technovolt-backend:latest
+    build:
+      context: ./WebSyteProffessor/src/WebSyteProffessor
+      dockerfile: Dockerfile
+    container_name: technovolt-backend
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__DefaultConnection: 'Host=postgres;Port=5432;Database=ProfessorDb;Username=professor;Password=${POSTGRES_PASSWORD:-1}'
+    volumes:
+      # Category covers, video thumbnails and project photos live here. Without
+      # this volume every rebuild wipes all uploaded images.
+      - uploads:/app/wwwroot/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - technovolt
+
+  frontend:
+    image: technovolt-frontend:latest
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: technovolt-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - '80:80'
+    networks:
+      - technovolt
+
+volumes:
+  postgres-data:
+  uploads:
+
+networks:
+  technovolt:

@@ -49,6 +49,13 @@ public class ProjectService : IProjectService
     public async Task DeleteAsync(long projectId)
     {
         var project = await GetByIdAsync(projectId);
+
+        // Remove the uploaded files too, otherwise wwwroot/uploads grows forever.
+        foreach (var image in project.Images)
+        {
+            _fileUploadService.DeleteImage(image.ImageUrl);
+        }
+
         await _projectRepository.DeleteAsync(project);
     }
 }

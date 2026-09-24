@@ -1,74 +1,260 @@
-# Ignore all bin/ and obj/ folders recursively
+# =============================================================================
+# TechnoVolt — repo-wide ignores
+#   WebSyteProffessor/  ASP.NET Core 10 + EF Core
+#   frontend/           React + Vite (also has its own .gitignore)
+# =============================================================================
+
+
+# -----------------------------------------------------------------------------
+# .NET / MSBuild build output
+# -----------------------------------------------------------------------------
 **/[Bb]in/
 **/[Oo]bj/
-
-# Don't ignore solution or project files
-# (Remove these lines to keep them in Git)
-# **/*.csproj
-# **/*.sln
-
-# Ignore user-specific and IDE-related files recursively
-**/*.user
-**/*.suo
-**/*.vspx
-**/*.vsmdi
-.vs/
-.vscode/
-.idea/
-
-# Ignore packages, build artifacts and NuGet outputs
-packages/
-**/packages/
-**/*.nupkg
+**/[Dd]ebug/
+**/[Rr]elease/
+**/[Dd]ebugPublic/
+**/[Rr]eleases/
+**/x64/
+**/x86/
+**/[Ww][Ii][Nn]32/
+**/[Aa][Rr][Mm]/
+**/[Aa][Rr][Mm]64/
+**/bld/
+**/[Oo]ut/
+**/[Ll]og/
+**/[Ll]ogs/
 **/artifacts/
+project.lock.json
+project.fragment.lock.json
 
-# Ignore test results
-TestResults/
-**/*.trx
-**/*.coverage
-**/*.testsettings
+# Publish output
+**/[Pp]ublish/
+*.publishsettings
+*.azurePubxml
+*.pubxml
+*.pubxml.user
+PublishScripts/
 
-# Ignore local DB files
-**/*.db
-**/*.sqlite
-**/*.sqlite3
+# Compiled binaries and debug symbols.
+# Note: source files are kept — only build products are ignored here.
+*.dll
+*.exe
+*.pdb
+*.so
+*.dylib
+*.obj
+*.pch
+*.ilk
+*.meta
+*.iobj
+*.ipdb
+*.tlog
+*.lastbuildstate
+*.cache
+*.tmp_proj
+*_wpftmp.csproj
 
-# Ignore design and media files
-Design/
-**/*.psd
-**/*.ai
-**/*.xd
+# Keep solution and project files tracked (they are NOT ignored):
+#   *.sln  *.slnx  *.csproj
 
-# Ignore Xamarin/MAUI/Android/iOS output files
-**/*.apk
-**/*.aab
-**/*.ipa
-**/*.dll
-**/*.pdb
-**/*.so
-**/*.jar
-**/*.dex
 
-# Ignore temp, backup, and system files
-**/*~
-**/*.tmp
-**/*.bak
-**/*.swp
-**/*.swo
-.DS_Store
-Thumbs.db
-ehthumbs.db
+# -----------------------------------------------------------------------------
+# NuGet
+# -----------------------------------------------------------------------------
+*.nupkg
+*.snupkg
+**/packages/*
+!**/packages/build/
+*.nuget.props
+*.nuget.targets
+.nuget/
 
-# Ignore environment and config secrets
-.env
-.env.*
-secrets.json
-appsettings.*.local.json
 
-# Frontend (front/) — Node / Vite
-front/node_modules/
-front/dist/
-front/.env
-front/.env.local
+# -----------------------------------------------------------------------------
+# Visual Studio / Rider / VS Code
+# -----------------------------------------------------------------------------
+.vs/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/settings.json
+!.vscode/tasks.json
+.idea/
+.claude/
+*.sln.docstates
+*.suo
+*.user
+*.userosscache
+*.userprefs
+*.vspx
+*.vsp
+*.vsmdi
+*.dbmdl
+*.dbproj.schemaview
+*.jfm
+*.svclog
+*.scc
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+.localhistory/
+.mfractor/
+ipch/
+*.aps
+*.ncb
+*.opendb
+*.opensdf
+*.sdf
+*.VC.db
+*.VC.VC.opendb
+
+
+# -----------------------------------------------------------------------------
+# Tests / coverage / profiling
+# -----------------------------------------------------------------------------
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.trx
+*.coverage
+*.coveragexml
+*.testsettings
+coverage*.json
+coverage*.xml
+coverage*.info
+**/coverage/
+*.VisualState.xml
+*.psess
+*.vsp
+*.vspx
+*.sap
+BenchmarkDotNet.Artifacts/
+
+
+# -----------------------------------------------------------------------------
+# Node / Vite / frontend
+# -----------------------------------------------------------------------------
 **/node_modules/
 **/dist/
+**/dist-ssr/
+**/.vite/
+**/build/
+.eslintcache
+.stylelintcache
+*.tsbuildinfo
+.npm/
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
+.pnpm-store/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+
+# -----------------------------------------------------------------------------
+# Secrets and local configuration
+# Keep the *.example templates tracked so a fresh clone knows what to fill in.
+# -----------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+!.env.*.example
+secrets.json
+appsettings.*.local.json
+appsettings.Local.json
+*.pfx
+*.p12
+*.key
+*.pem
+*.cer
+*.crt
+
+
+# -----------------------------------------------------------------------------
+# Uploaded user content (category covers, video thumbnails, project photos).
+# These are runtime data, not source — in Docker they live in the `uploads`
+# volume. Remove this block if you want the seeded cover images committed.
+# -----------------------------------------------------------------------------
+WebSyteProffessor/src/WebSyteProffessor/wwwroot/uploads/
+
+
+# -----------------------------------------------------------------------------
+# Local databases
+# -----------------------------------------------------------------------------
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+*.mdf
+*.ldf
+*.ndf
+
+
+# -----------------------------------------------------------------------------
+# Docker / infra local overrides
+# -----------------------------------------------------------------------------
+docker-compose.override.yml
+docker-compose.*.local.yml
+*.tfstate
+*.tfstate.*
+.terraform/
+
+
+# -----------------------------------------------------------------------------
+# Design sources and large media
+# -----------------------------------------------------------------------------
+Design/
+*.psd
+*.ai
+*.xd
+*.fig
+*.sketch
+
+
+# -----------------------------------------------------------------------------
+# Mobile build output (Xamarin / MAUI)
+# -----------------------------------------------------------------------------
+*.apk
+*.aab
+*.ipa
+*.jar
+*.dex
+*.app
+*.ap_
+
+
+# -----------------------------------------------------------------------------
+# Temp, backup and OS files
+# -----------------------------------------------------------------------------
+*~
+*.tmp
+*.temp
+*.bak
+*.orig
+*.rej
+*.swp
+*.swo
+*.pid
+*.seed
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk

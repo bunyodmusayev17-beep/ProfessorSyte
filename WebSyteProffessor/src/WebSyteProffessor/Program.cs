@@ -28,7 +28,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// In the container only HTTP:8080 is bound (TLS is terminated by nginx), so
+// redirecting there would either be a no-op warning or break API calls.
+if (app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseStaticFiles();
 
 app.UseCors("AllowFrontend");
