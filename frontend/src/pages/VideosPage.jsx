@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { PageHeader } from '@/components/ui/PageHeader';
-import { Reveal } from '@/components/ui/Reveal';
 import { CategoryFilter } from '@/features/categories/CategoryFilter';
 import { VideoGrid } from '@/features/videos/VideoGrid';
 import { useCategories } from '@/hooks/useCategories';
@@ -47,8 +46,9 @@ export default function VideosPage() {
     : (activeCategory?.description ?? 'Newest lessons first');
 
   return (
-    <Reveal>
+    <>
       <PageHeader
+        eyebrow={search ? 'Search' : 'Library'}
         title={activeCategory ? activeCategory.name : 'All videos'}
         description={description}
       />
@@ -69,6 +69,6 @@ export default function VideosPage() {
           search ? 'Try a different search term.' : 'Pick another category to explore.'
         }
       />
-    </Reveal>
+    </>
   );
 }

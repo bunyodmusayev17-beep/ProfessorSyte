@@ -31,9 +31,11 @@ function VideoList({ items, getKey, getLabel, getTimestamp, emptyMessage, isPend
         <li key={getKey(item)}>
           <Link
             to={`/videos/${item.videoId}`}
-            className="hover:bg-raised -mx-2 flex items-center justify-between gap-3 rounded-lg px-2 py-2.5 transition-colors"
+            className="hover:bg-raised/60 group -mx-2 flex items-center justify-between gap-3 rounded-lg px-2 py-2.5 transition-all hover:translate-x-1"
           >
-            <span className="text-fg min-w-0 flex-1 truncate text-sm">{getLabel(item)}</span>
+            <span className="text-fg group-hover:text-primary-light min-w-0 flex-1 truncate text-sm transition-colors">
+              {getLabel(item)}
+            </span>
             <span className="text-subtle shrink-0 text-xs">{getTimestamp(item)}</span>
           </Link>
         </li>
@@ -64,7 +66,11 @@ export default function MyProgressPage() {
 
   return (
     <>
-      <PageHeader title="My progress" description="The videos you have watched and saved" />
+      <PageHeader
+        eyebrow="Dashboard"
+        title="My progress"
+        description="The videos you have watched and saved"
+      />
 
       <div className="mb-6">
         <ProgressSummary />

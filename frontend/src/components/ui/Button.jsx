@@ -5,19 +5,22 @@ import { cn } from '@/lib/cn';
 import { Spinner } from './Spinner';
 
 const VARIANTS = {
-  primary: 'bg-primary text-white hover:bg-primary-dark',
-  secondary: 'bg-raised text-fg border border-line hover:bg-secondary',
-  ghost: 'text-muted hover:bg-raised hover:text-fg',
-  accent: 'bg-accent text-white hover:bg-violet-600',
-  danger: 'bg-danger text-white hover:bg-red-600',
+  primary:
+    'btn-shine bg-brand bg-[length:200%_100%] bg-left text-white shadow-[0_6px_24px_-8px_rgb(59_130_246_/_0.7)] hover:bg-right hover:shadow-glow',
+  secondary:
+    'bg-raised/70 text-fg border border-line hover:border-primary/40 hover:bg-raised backdrop-blur',
+  ghost: 'text-muted hover:bg-raised/80 hover:text-fg',
+  accent: 'btn-shine bg-accent text-white hover:bg-violet-600',
+  danger:
+    'bg-danger text-white hover:bg-red-600 hover:shadow-[0_8px_24px_-8px_rgb(239_68_68_/_0.6)]',
   outlineDanger: 'bg-transparent text-danger border border-danger/40 hover:bg-danger/10',
 };
 
 const SIZES = {
-  sm: 'h-8 px-3 text-xs gap-1.5',
-  md: 'h-10 px-4 text-sm gap-2',
-  lg: 'h-11 px-5 text-sm gap-2',
-  icon: 'h-9 w-9 text-sm',
+  sm: 'h-8 px-3 text-xs gap-1.5 rounded-lg',
+  md: 'h-10 px-4 text-sm gap-2 rounded-xl',
+  lg: 'h-12 px-6 text-sm gap-2 rounded-xl',
+  icon: 'h-9 w-9 text-sm rounded-lg',
 };
 
 /**
@@ -38,8 +41,9 @@ export function Button({
   ...props
 }) {
   const classes = cn(
-    'inline-flex items-center justify-center rounded-lg font-medium whitespace-nowrap',
-    'transition-colors disabled:cursor-not-allowed disabled:opacity-50',
+    'inline-flex items-center justify-center font-medium whitespace-nowrap select-none',
+    'transition-all duration-300 ease-(--ease-out-soft) active:scale-[0.97]',
+    'disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
     VARIANTS[variant] ?? VARIANTS.primary,
     SIZES[size] ?? SIZES.md,
     fullWidth && 'w-full',

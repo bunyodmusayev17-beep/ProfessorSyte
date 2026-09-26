@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
 
 import { PageHeader } from '@/components/ui/PageHeader';
 import { cn } from '@/lib/cn';
@@ -12,11 +12,17 @@ const TABS = [
 ];
 
 export default function AdminLayout() {
+  const { pathname } = useLocation();
+
   return (
     <>
-      <PageHeader title="Admin panel" description="Manage content and users" />
+      <PageHeader
+        eyebrow="Control room"
+        title="Admin panel"
+        description="Manage content and users"
+      />
 
-      <div className="border-line no-scrollbar -mx-4 mb-6 flex gap-1 overflow-x-auto border-b px-4 md:mx-0 md:px-0">
+      <div className="no-scrollbar border-line bg-surface/60 -mx-4 mb-8 flex w-fit max-w-[calc(100%+2rem)] gap-1 overflow-x-auto rounded-2xl border p-1 backdrop-blur md:mx-0 md:max-w-full">
         {TABS.map((tab) => (
           <NavLink
             key={tab.to}
@@ -24,10 +30,10 @@ export default function AdminLayout() {
             end={tab.end}
             className={({ isActive }) =>
               cn(
-                '-mb-px shrink-0 border-b-2 px-3 py-2.5 text-sm font-medium whitespace-nowrap transition-colors',
+                'shrink-0 rounded-xl px-4 py-2 text-sm font-medium whitespace-nowrap transition-all duration-300',
                 isActive
-                  ? 'border-primary text-primary'
-                  : 'text-muted hover:text-fg border-transparent'
+                  ? 'bg-brand shadow-glow text-white'
+                  : 'text-muted hover:text-fg hover:bg-raised/60'
               )
             }
           >
@@ -36,7 +42,9 @@ export default function AdminLayout() {
         ))}
       </div>
 
-      <Outlet />
+      <div key={pathname} className="animate-fade">
+        <Outlet />
+      </div>
     </>
   );
 }

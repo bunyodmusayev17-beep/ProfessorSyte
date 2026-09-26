@@ -20,7 +20,7 @@ export function MobileNav() {
   return (
     <nav
       aria-label="Main navigation"
-      className="border-line bg-sidebar pb-safe fixed inset-x-0 bottom-0 z-20 flex items-stretch border-t md:hidden"
+      className="border-line glass pb-safe fixed inset-x-0 bottom-0 z-30 flex items-stretch border-t md:hidden"
     >
       {items.map(({ to, shortLabel, icon: Icon, end }) => (
         <NavLink
@@ -29,13 +29,27 @@ export function MobileNav() {
           end={end}
           className={({ isActive }) =>
             cn(
-              'flex min-w-0 flex-1 flex-col items-center gap-1 px-0.5 py-2.5 text-[10px] font-medium transition-colors',
-              isActive ? 'text-primary' : 'text-subtle'
+              'relative flex min-w-0 flex-1 flex-col items-center gap-1 px-0.5 py-2.5 text-[10px] font-medium transition-colors',
+              isActive ? 'text-white' : 'text-subtle'
             )
           }
         >
-          <Icon size={20} className="shrink-0" />
-          <span className="max-w-full truncate">{shortLabel}</span>
+          {({ isActive }) => (
+            <>
+              {isActive && (
+                <span className="bg-brand absolute top-0 h-0.5 w-8 rounded-b-full shadow-[0_0_10px_rgb(96_165_250)]" />
+              )}
+              <span
+                className={cn(
+                  'flex h-7 w-12 items-center justify-center rounded-full transition-all duration-300',
+                  isActive && 'bg-primary/20 text-primary-light scale-105'
+                )}
+              >
+                <Icon size={19} className="shrink-0" />
+              </span>
+              <span className="max-w-full truncate">{shortLabel}</span>
+            </>
+          )}
         </NavLink>
       ))}
     </nav>

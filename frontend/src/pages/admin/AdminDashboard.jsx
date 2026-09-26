@@ -5,26 +5,31 @@ import { Card, CardBody, CardHeader } from '@/components/ui/Card';
 import { ErrorState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useAnalytics } from '@/hooks/useAdmin';
+import { useCountUp } from '@/hooks/useCountUp';
 import { getErrorMessage } from '@/lib/apiError';
 import { cn } from '@/lib/cn';
 import { formatCount } from '@/lib/format';
 
 function StatCard({ icon: Icon, label, value, tone }) {
+  const count = useCountUp(value);
   const tones = {
-    primary: 'bg-primary/15 text-primary-light',
-    accent: 'bg-accent/15 text-accent',
-    success: 'bg-success/15 text-success',
+    primary: 'from-primary/30 text-primary-light',
+    accent: 'from-accent/30 text-accent',
+    success: 'from-success/30 text-success',
   };
 
   return (
-    <Card className="flex items-center gap-3 p-4">
+    <Card className="group flex items-center gap-4 p-5 transition-transform duration-500 hover:-translate-y-1">
       <span
-        className={cn('flex size-10 shrink-0 items-center justify-center rounded-lg', tones[tone])}
+        className={cn(
+          'flex size-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br to-transparent transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6',
+          tones[tone]
+        )}
       >
-        <Icon size={19} />
+        <Icon size={21} />
       </span>
       <span className="min-w-0">
-        <span className="text-fg block text-2xl font-semibold">{formatCount(value)}</span>
+        <span className="font-display text-fg block text-3xl font-bold">{formatCount(count)}</span>
         <span className="text-subtle block truncate text-xs">{label}</span>
       </span>
     </Card>
