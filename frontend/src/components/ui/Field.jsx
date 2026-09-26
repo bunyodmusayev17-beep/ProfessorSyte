@@ -3,8 +3,9 @@ import { useId } from 'react';
 import { cn } from '@/lib/cn';
 
 const CONTROL_CLASSES =
-  'border-line bg-raised text-fg placeholder:text-subtle w-full rounded-lg border px-3 py-2 text-sm ' +
-  'transition-colors focus:border-primary focus:outline-none disabled:opacity-60';
+  'border-line bg-raised/60 text-fg placeholder:text-subtle w-full rounded-xl border px-3.5 py-2.5 text-sm ' +
+  'transition-all duration-300 hover:border-secondary focus:border-primary focus:bg-raised ' +
+  'focus:shadow-[0_0_0_4px_rgb(59_130_246_/_0.15)] focus:outline-none disabled:opacity-60';
 
 /**
  * Label + control + error message, wired together with a generated id so every

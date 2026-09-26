@@ -39,12 +39,12 @@ export function Modal({ open, onClose, title, description, children, footer, cla
       ref={dialogRef}
       aria-labelledby="modal-title"
       className={cn(
-        'border-line bg-surface text-fg fixed border shadow-2xl',
+        'border-line bg-surface text-fg fixed border shadow-[0_30px_80px_-20px_rgb(0_0_0_/_0.8)]',
         // Phone: full-width sheet pinned to the bottom.
         'inset-x-0 top-auto bottom-0 m-0 max-h-[88vh] w-full rounded-t-2xl rounded-b-none p-0',
         // Tablet and up: centred dialog.
-        'sm:rounded-card sm:inset-0 sm:m-auto sm:w-[calc(100vw-3rem)] sm:max-w-lg',
-        'backdrop:bg-black/60 backdrop:backdrop-blur-sm',
+        'sm:inset-0 sm:m-auto sm:w-[calc(100vw-3rem)] sm:max-w-lg sm:rounded-2xl',
+        'backdrop:bg-black/70 backdrop:backdrop-blur-md',
         className
       )}
       // A click on the backdrop lands on the dialog element itself.

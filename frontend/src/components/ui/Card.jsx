@@ -3,7 +3,10 @@ import { cn } from '@/lib/cn';
 export function Card({ as: Tag = 'div', className, children, ...props }) {
   return (
     <Tag
-      className={cn('border-line bg-surface rounded-card shadow-card border', className)}
+      className={cn(
+        'border-line bg-surface/80 rounded-card shadow-card relative border backdrop-blur-sm',
+        className
+      )}
       {...props}
     >
       {children}

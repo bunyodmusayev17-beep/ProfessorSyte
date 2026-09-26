@@ -1,19 +1,25 @@
 import { Children, cloneElement, isValidElement } from 'react';
 
+import { useInView } from '@/hooks/useInView';
 import { cn } from '@/lib/cn';
 
 /** How many items still get an increasing delay before it flattens out. */
 const MAX_STAGGER_INDEX = 11;
 
 /**
- * Fades a block up as it mounts. Used for page sections so content arrives
- * instead of snapping in. `delay` is in milliseconds.
+ * Fades and un-blurs a block up the first time it scrolls into view, so long
+ * pages unfold as you read instead of everything animating off-screen at once.
+ * `delay` is in milliseconds.
  */
-export function Reveal({ as: Tag = 'div', delay = 0, className, children, ...props }) {
+export function Reveal({ as: Tag = 'div', delay = 0, className, style, children, ...props }) {
+  const [ref, inView] = useInView();
+
   return (
     <Tag
-      className={cn('animate-reveal', className)}
-      style={delay ? { animationDelay: `${delay}ms` } : undefined}
+      ref={ref}
+      data-inview={inView}
+      className={cn('reveal-on-scroll', className)}
+      style={delay ? { ...style, '--reveal-delay': `${delay}ms` } : style}
       {...props}
     >
       {children}
@@ -22,13 +28,20 @@ export function Reveal({ as: Tag = 'div', delay = 0, className, children, ...pro
 }
 
 /**
- * Reveals a grid's children one after another. The delay index is written onto
- * each child as a CSS variable (see the `.stagger` utility), so no extra
- * wrapper elements are inserted and the grid layout stays intact.
+ * Reveals a grid's children one after another once the grid is on screen. The
+ * delay index is written onto each child as a CSS variable (see `.stagger`),
+ * so no extra wrapper elements are inserted and the grid layout stays intact.
  */
-export function Stagger({ as: Tag = 'div', step = 45, className, children, ...props }) {
+export function Stagger({ as: Tag = 'div', step = 60, className, children, ...props }) {
+  const [ref, inView] = useInView();
+
   return (
-    <Tag className={cn('stagger', className)} style={{ '--stagger-step': `${step}ms` }} {...props}>
+    <Tag
+      ref={ref}
+      className={cn(inView ? 'stagger' : '[&>*]:opacity-0', className)}
+      style={{ '--stagger-step': `${step}ms` }}
+      {...props}
+    >
       {Children.map(children, (child, index) => {
         if (!isValidElement(child)) return child;
 

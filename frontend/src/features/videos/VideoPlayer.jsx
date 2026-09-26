@@ -15,15 +15,22 @@ export function VideoPlayer({ youtubeUrl, title }) {
   }
 
   return (
-    <div className="rounded-card border-line aspect-video overflow-hidden border bg-black">
-      <iframe
-        src={embedUrl}
-        title={title}
-        className="h-full w-full"
-        allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        referrerPolicy="strict-origin-when-cross-origin"
-        allowFullScreen
+    <div className="animate-scale-in relative">
+      {/* Ambient glow bleeding out from behind the player. */}
+      <span
+        aria-hidden
+        className="bg-brand animate-gradient absolute -inset-3 -z-10 rounded-[1.5rem] bg-[length:200%_200%] opacity-25 blur-2xl"
       />
+      <div className="rounded-card aspect-video overflow-hidden border border-white/10 bg-black shadow-2xl">
+        <iframe
+          src={embedUrl}
+          title={title}
+          className="h-full w-full"
+          allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          referrerPolicy="strict-origin-when-cross-origin"
+          allowFullScreen
+        />
+      </div>
     </div>
   );
 }

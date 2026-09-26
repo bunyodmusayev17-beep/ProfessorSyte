@@ -7,11 +7,20 @@ import { Card } from './Card';
 
 export function EmptyState({ icon: Icon = Inbox, title, description, action, className }) {
   return (
-    <Card className={cn('flex flex-col items-center gap-2 px-6 py-12 text-center', className)}>
-      <div className="bg-raised text-subtle mb-1 flex size-11 items-center justify-center rounded-full">
-        <Icon size={20} />
+    <Card
+      className={cn(
+        'animate-reveal flex flex-col items-center gap-2 overflow-hidden px-6 py-14 text-center',
+        className
+      )}
+    >
+      <span aria-hidden className="bg-grid mask-fade absolute inset-0 -z-10 opacity-60" />
+      <div className="relative mb-2">
+        <span className="bg-primary/20 animate-ping-slow absolute inset-0 rounded-2xl" />
+        <div className="border-primary/30 bg-raised text-primary-light relative flex size-14 items-center justify-center rounded-2xl border">
+          <Icon size={24} />
+        </div>
       </div>
-      <h3 className="text-fg text-sm font-semibold">{title}</h3>
+      <h3 className="text-fg text-base font-semibold">{title}</h3>
       {description && <p className="text-muted max-w-sm text-sm">{description}</p>}
       {action && <div className="mt-3">{action}</div>}
     </Card>

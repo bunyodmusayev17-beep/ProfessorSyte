@@ -72,9 +72,12 @@ export default function App() {
               toastOptions={{
                 duration: 3500,
                 style: {
-                  background: 'var(--color-raised)',
+                  background: 'rgb(21 32 53 / 0.85)',
+                  backdropFilter: 'blur(16px)',
                   color: 'var(--color-fg)',
                   border: '1px solid var(--color-line)',
+                  borderRadius: '14px',
+                  boxShadow: '0 20px 40px -12px rgb(0 0 0 / 0.6)',
                   fontSize: '0.875rem',
                 },
                 success: { iconTheme: { primary: 'var(--color-success)', secondary: '#fff' } },
